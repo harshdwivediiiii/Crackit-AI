@@ -21,7 +21,7 @@ function Navbar() {
         { name: 'Dashboard', link: '/dashboard', icon: <LayoutDashboard size={18} /> },
         { name: 'Questions', link: '/dashboard/questions', icon: <MessageSquare size={18} /> },
         { name: 'Upgrade', link: '/dashboard/upgrade', icon: <ArrowUpCircle size={18} /> },
-        { name: 'How it Works?', link: '/dashboard/how', icon: <HelpCircle size={18} /> },
+        { name: 'How it Works?', link: '/Howitworks', icon: <HelpCircle size={18} /> },
     ];
 
     useEffect(() => {
@@ -36,7 +36,11 @@ function Navbar() {
     return (
         <div className='flex p-4 items-center justify-between bg-secondary shadow-sm'>
             {/* Logo */}
-            <Image src={'/logo.svg'} width={160} height={100} alt='logo' />
+            
+            <Link href="/" className="hover:opacity-75 transition-opacity">
+    <Image src="/C.png" width={50} height={100} alt="logo" />
+</Link>
+
 
             {/* Desktop Nav */}
             <ul className='hidden md:flex gap-6'>
@@ -95,7 +99,10 @@ function Navbar() {
                             </SheetHeader>
 
                             <div className='flex-1'>
-                                <Image src={'/logo.svg'} width={120} height={60} alt='logo' className='mb-4' />
+                            <Link href="/" className="hover:opacity-75 transition-opacity">
+    <Image src="/C.png" width={50} height={100} alt="logo" />
+</Link>
+
                                 <ul className='flex flex-col gap-4'>
                                     {pages.map(({ name, link, icon }) => (
                                         <Link key={name} href={link} onClick={() => setIsSheetOpen(false)}>

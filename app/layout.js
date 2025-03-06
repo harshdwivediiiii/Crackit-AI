@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import Navbar from "./dashboard/_components/Navbar";
+import Footer from "./dashboard/_components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Crackit AI",
   description: "Your personal AI-powered mock interview platform. Practice, improve, and crack your dream job with confidence.",
+  icons: {
+    icon: "/c.png",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -29,7 +33,8 @@ export default function RootLayout({ children }) {
         <Toaster />
         <Navbar />
         {children}
-      </body>
+        <Footer />
+      </body>     
     </html>
     </ClerkProvider>
   );
