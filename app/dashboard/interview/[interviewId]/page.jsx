@@ -1,65 +1,65 @@
-"use client"
+"use client";
+
 import { db } from '@/utils/db';
 import { MockInterview } from '@/utils/schema';
 import { eq } from 'drizzle-orm';
-import React, { useEffect, useState } from 'react'
-
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import QuestionsSection from './start/_components/QuestionsSection';
-import RecordAnswerSection from './start/_components/RecordAnswerSection';
+import dynamic from 'next/dynamic';
+import { useParams } from 'next/navigation'; // ✅ Import useParams
 
-function StartInterview({params}) {
+// Lazy load (fixes `window is not defined`)
+const RecordAnswerSection = dynamic(() => import('./start/_components/RecordAnswerSection'), { ssr: false });
 
-    const [interviewData,setInterviewData]=useState();
-    const [mockInterviewQuestion,setMockInterviewQuestion]=useState();
-    const [activeQuestionIndex,setActiveQuestionIndex]=useState(0);
-    useEffect(()=>{
-        GetInterviewDetails();
-    },[]);
+function StartInterview() {
+    const { interviewId } = useParams(); // ✅ Get params properly
 
-    /**
-     * Used to Get Interview Details by MockId/Interview Id
-     */
-    const GetInterviewDetails=async()=>{
-        const result=await db.select().from(MockInterview)
-        .where(eq(MockInterview.mockId,params.interviewId))
+    const [interviewData, setInterviewData] = useState();
+    const [mockInterviewQuestion, setMockInterviewQuestion] = useState();
+    const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
 
-        const jsonMockResp=JSON.parse(result[0].jsonMockResp);
-        console.log(jsonMockResp)
+    useEffect(() => {
+        if (interviewId) {
+            GetInterviewDetails(interviewId);
+        }
+    }, [interviewId]);
+
+    const GetInterviewDetails = async (id) => {
+        const result = await db.select().from(MockInterview)
+            .where(eq(MockInterview.mockId, id)); // ✅ Use interviewId from params
+
+        const jsonMockResp = JSON.parse(result[0]?.jsonMockResp || '[]');
         setMockInterviewQuestion(jsonMockResp);
         setInterviewData(result[0]);
-    } 
-  return (
-    <div>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-10'>
-            {/* Questions  */}
-            <QuestionsSection
-            mockInterviewQuestion={mockInterviewQuestion}
-            activeQuestionIndex={activeQuestionIndex}
-            />
+    };
 
-            {/* Video/ Audio Recording  */}
-            <RecordAnswerSection
-             mockInterviewQuestion={mockInterviewQuestion}
-             activeQuestionIndex={activeQuestionIndex}
-             interviewData={interviewData}
-            />
+    return (
+        <div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-10'>
+                <QuestionsSection
+                    mockInterviewQuestion={mockInterviewQuestion}
+                    activeQuestionIndex={activeQuestionIndex}
+                />
+                <RecordAnswerSection
+                    mockInterviewQuestion={mockInterviewQuestion}
+                    activeQuestionIndex={activeQuestionIndex}
+                    interviewData={interviewData}
+                />
+            </div>
+            <div className='flex justify-end gap-6'>
+                {activeQuestionIndex > 0 &&
+                    <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}>Previous Question</Button>}
+                {activeQuestionIndex !== mockInterviewQuestion?.length - 1 &&
+                    <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}>Next Question</Button>}
+                {activeQuestionIndex === mockInterviewQuestion?.length - 1 &&
+                    <Link href={`/dashboard/interview/${interviewData?.mockId}/feedback`}>
+                        <Button>End Interview</Button>
+                    </Link>}
+            </div>
         </div>
-        <div className='flex justify-end gap-6'>
-          {activeQuestionIndex>0&&  
-          <Button onClick={()=>setActiveQuestionIndex(activeQuestionIndex-1)}>Previous Question</Button>}
-          {activeQuestionIndex!=mockInterviewQuestion?.length-1&& 
-           <Button onClick={()=>setActiveQuestionIndex(activeQuestionIndex+1)}>Next Question</Button>}
-          {activeQuestionIndex==mockInterviewQuestion?.length-1&&  
-          <Link href={'/dashboard/interview/'+interviewData?.mockId+"/feedback"}>
-          <Button >End Interview</Button>
-          </Link>}
-
-
-        </div>
-    </div>
-  )
+    );
 }
 
-export default StartInterview
+export default StartInterview;

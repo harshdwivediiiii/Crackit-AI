@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // Added SheetHeader and SheetTitle
 import { Menu, Search, LayoutDashboard, ArrowUpCircle, MessageSquare, HelpCircle, HomeIcon } from 'lucide-react';
 
 function Navbar() {
@@ -17,7 +17,7 @@ function Navbar() {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     const pages = [
-        {name: 'Home', link: '/', icon: <HomeIcon size={18} />},
+        { name: 'Home', link: '/', icon: <HomeIcon size={18} /> },
         { name: 'Dashboard', link: '/dashboard', icon: <LayoutDashboard size={18} /> },
         { name: 'Questions', link: '/dashboard/questions', icon: <MessageSquare size={18} /> },
         { name: 'Upgrade', link: '/dashboard/upgrade', icon: <ArrowUpCircle size={18} /> },
@@ -88,7 +88,13 @@ function Navbar() {
                             </button>
                         </SheetTrigger>
                         <SheetContent side="right" className="p-4 flex flex-col justify-between h-full">
-                            <div>
+
+                            {/* Fix: Added SheetHeader & SheetTitle for accessibility */}
+                            <SheetHeader>
+                                <SheetTitle>Crackit AI</SheetTitle>
+                            </SheetHeader>
+
+                            <div className='flex-1'>
                                 <Image src={'/logo.svg'} width={120} height={60} alt='logo' className='mb-4' />
                                 <ul className='flex flex-col gap-4'>
                                     {pages.map(({ name, link, icon }) => (
